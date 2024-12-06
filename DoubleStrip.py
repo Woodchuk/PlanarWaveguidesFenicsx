@@ -141,7 +141,7 @@ def Beta(k0, Symm):
     bc_dofs = fem.locate_dofs_topological(V, mesh.topology.dim - 1, bc_facets1)
     bc_dofs1 = np.append(bc_dofs, fem.locate_dofs_topological(V, mesh.topology.dim - 1, bc_facets2))
     u_bc = fem.Function(V)
-    with u_bc.vector.localForm() as loc:
+    with u_bc.x.petsc_vec.localForm() as loc:
         loc.set(0)
     bc = fem.dirichletbc(u_bc, bc_dofs1)
     A = assemble_matrix(a, bcs=[bc])
@@ -188,7 +188,7 @@ def Beta(k0, Symm):
         Et_dg = fem.Function(W)
         
         for i, kz in vals:
-            eigs.getEigenpair(i, eh.vector)
+            eigs.getEigenpair(i, eh.x.petsc_vec)
             eh.x.scatter_forward()
             eth, ezh = eh.split()
             eth = eh.sub(0).collapse()
